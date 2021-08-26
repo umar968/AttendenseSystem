@@ -3,6 +3,11 @@ class Controller
 {
     function __construct()
     {
-        echo "Hello This is base controller";
+        $this->View = new View();
+    }
+    function loadModel($ModelName)
+    {
+        require "Models/$ModelName.php";
+        $this->Model = new $ModelName();
     }
 }

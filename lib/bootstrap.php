@@ -1,8 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 class Bootstrap
 {
     function __construct()
@@ -10,6 +7,8 @@ class Bootstrap
         $url = isset($_GET['url']) ? $_GET['url'] : null;
         $url = rtrim($url, '/');
         $url = explode('/', $url);
+        $config = parse_ini_file('config/config.ini');
+        Session::init();
         print_r($url);
         if (empty($url[0])) {
             //url is empty so redirect to Home page
@@ -24,7 +23,6 @@ class Bootstrap
                 if (!empty($url[1])) {
                     //hence method is being passed
                     if (method_exists($controller, $url[1])) {
-
                         if (!empty($url[2])) {
                             //hence parameter is also passed
                             echo "parameter passed";
@@ -44,8 +42,9 @@ class Bootstrap
                 }
             } else {
                 //Defined Controller Doesnot Exist so move to Home Page
-                echo "No controller exists";
+                echo "No controller exists" . $controller;
             }
         }
+        // Session::destroy();
     }
 }
