@@ -18,19 +18,19 @@ class User extends Controller
             //Loggedin Go to Dashboard
             Session::set('loggedIn', true);
             Session::set('loginError', null);
+
             header('location:../EmployeeDashboard');
         } else {
             //Invalid Credentials
             Session::set('loginError', "Invalid Username or Password");
             Session::set('loggedIn', false);
-            header('location: User');
+            header('location: ../User');
         }
     }
     function logout()
     {
         Session::set('loggedIn', false);
         Session::set('logginError', '');
-        sleep(3);
         header('location: ../User');
     }
 }

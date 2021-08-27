@@ -7,7 +7,7 @@ class Bootstrap
         $url = isset($_GET['url']) ? $_GET['url'] : null;
         $url = rtrim($url, '/');
         $url = explode('/', $url);
-        $config = parse_ini_file('config/config.ini');
+
         Session::init();
         print_r($url);
         if (empty($url[0])) {
