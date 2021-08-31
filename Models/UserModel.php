@@ -22,6 +22,25 @@ class UserModel extends Model
             return false;
         }
     }
+    function isEmployee()
+    {
+        $UserId = Session::get('UserId');
+        echo $UserId;
+        $query = "Select Designation from Designation where EmployeeId=(Select EmployeeId from Employees where UserId='$UserId')";
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            echo "Error in isEmployee" . $this->db->db->error;
+            return false;
+            die("");
+        } else {
+            $result = $result->fetch_assoc();
+            if ($result['Designation'] == 'Hr Manager') {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
     function getUserData($UserId)
     {
         //User Data will be fetched here for display in Dashboard
@@ -128,6 +147,157 @@ class UserModel extends Model
                 }
             } else {
                 //no entry of time in
+            }
+        }
+    }
+    function getBossList()
+    {
+        $query = "SELECT Employees.Name FROM Employees INNER JOIN Designation ON Employees.EmployeeId=Designation.EmployeeId where Designation.Designation='Manager';";
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            echo "error" . $this->db->db->error;
+        } else {
+            $data = array();
+            while ($row = $result->fetch_assoc()) {
+                array_push($data, $row['Name']);
+            }
+            echo json_encode($data);
+        }
+    }
+    function addEmployee()
+    {
+        $Name = $_POST['Name'];
+        $Username = $_POST['UserName'];
+        $Department = $_POST['Department'];
+        $Salary = $_POST['Salary'];
+        $Designation = $_POST['Designation'];
+        $ImageName = $_FILES["ProfilePicture"]["name"];
+        $Boss = isset($_POST['Boss']) ? $_POST['Boss'] : null;
+        $Password = $_POST['Password'];
+        $query = "Insert into Users (UserName,Password) values ('$Username','$Password')";
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            echo $this->db->db->error;
+            die("Error1");
+        } else {
+            $query = "INSERT INTO Employees (`UserId`, `Name`, `Salary`, `Profile Picture`, `Boss`,  `Department`) VALUES ((select UserId from Users where  Password='$Password'), '$Name', '$Salary', '$ImageName', '$Boss',  '$Department');";
+            $folder = "Images/" . $ImageName;
+            $result = $this->db->db->query($query);
+            if (!$result) {
+                echo $this->db->db->error;
+                die("error2");
+            } else {
+
+                $query = "Select EmployeeId from Employees where UserId=(select UserId from Users where UserName='$Username' and Password='$Password')";
+                $result = $this->db->db->query($query);
+
+                if (!$result) {
+                    echo $this->db->db->error;
+                    die("error3");
+                } else {
+                    $result = $result->fetch_assoc();
+                    $EmployeeId = $result['EmployeeId'];
+                    $query = "Insert into Designation (Designation,EmployeeId) values ('$Designation','$EmployeeId')";
+                    $result = $this->db->db->query($query);
+                    if (!$result) {
+                        echo $this->db->db->error;
+                        die("error4");
+                    } else {
+                        if (move_uploaded_file($_FILES['ProfilePicture']['tmp_name'], $folder)) {
+                            header("Location:index.html");
+                        } else {
+                            die("Cannot upload image");
+                        }
+                    }
+                }
+            }
+        }
+    }
+    function getEmployees()
+    {
+        $query = "Select * from Employees";
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            die($this->db->db->error);
+        } else {
+            $result = $result->fetch_all();
+            echo json_encode($result);
+        }
+    }
+    function delEmployee($EmployeeId)
+    {
+        $query = "Delete from Attendence where EmployeeId=$EmployeeId";
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            die($this->db->db->error);
+        } else {
+            $query = "Delete from Users where UserId=(Select UserId from Employees where EmployeeId=$EmployeeId)";
+            $result = $this->db->db->query($query);
+            echo "hello";
+
+            if (!$result) {
+
+                die($this->db->db->error);
+            } else {
+                $query = "Delete from Employees where EmployeeId=$EmployeeId";
+                $result = $this->db->db->query($query);
+                if (!$result) {
+                    die($this->db->db->error);
+                } else {
+                    $query = "Delete from Designation where EmployeeId=$EmployeeId";
+                    $result = $this->db->db->query($query);
+                    if (!$result) {
+                        die($this->db->db->error);
+                    } else {
+                        echo "Congrats Succesfully deleted";
+                    }
+                }
+            }
+        }
+    }
+    function editEmployee($EmployeeId)
+    {
+        $Name = $_POST['Name'];
+        $Department = $_POST['Department'];
+        $Salary = $_POST['Salary'];
+        $Boss = isset($_POST['Boss']) ? $_POST['Boss'] : null;
+        $query = "Update Employees set Name='$Name', Department='$Department', Salary='$Salary', Boss='$Boss' where EmployeeId=$EmployeeId";
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            die($this->db->db->error);
+        } else {
+            echo ("Edited");
+        }
+    }
+
+    function generateList()
+    {
+        $query = "select Name from Employees where EmployeeId NOT IN (select EmployeeId from Attendence) ";
+        $result = $this->db->db->query($query);
+        $list = array();
+        if (!$result) {
+            die("Sorry");
+        } else {
+            while ($row = $result->fetch_assoc()) {
+                echo "<br>" . $row['Name'] . "<br>";
+            }
+        }
+    }
+    function checkStatus($EmployeeId)
+    {
+
+        $Date = date('Y/m/d');
+        $query = "Select * from Attendence where EmployeeId=$EmployeeId and Date=$Date";
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            die("Soory");
+        } else {
+            if ($result->num_rows > 0) {
+
+                return true;
+            } else {
+
+                return false;
             }
         }
     }

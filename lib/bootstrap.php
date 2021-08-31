@@ -9,10 +9,10 @@ class Bootstrap
         $url = explode('/', $url);
 
         Session::init();
-        print_r($url);
+
         if (empty($url[0])) {
             //url is empty so redirect to Home page
-            echo "url is empty";
+
         } else {
             $controller = "controllers/" . $url[0] . "Controller.php";
 
@@ -25,7 +25,7 @@ class Bootstrap
                     if (method_exists($controller, $url[1])) {
                         if (!empty($url[2])) {
                             //hence parameter is also passed
-                            echo "parameter passed";
+
                             $controller->{$url[1]}($url[2]);
                         } else {
                             //only controller and method no parameter                            
@@ -33,16 +33,16 @@ class Bootstrap
                         }
                     } else {
                         //Method is passed but it doesnot exist in controller
-                        echo "Sorry Method passed doesnot exist";
+
                     }
                 } else {
                     //No method is passed only controller
-                    echo "Method is not passed";
+
                     $controller->render();
                 }
             } else {
                 //Defined Controller Doesnot Exist so move to Home Page
-                echo "No controller exists" . $controller;
+
             }
         }
         // Session::destroy();

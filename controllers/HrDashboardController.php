@@ -26,4 +26,32 @@ class HrDashboard extends Controller
     {
         $this->View->render('HrDashboard', 'HrDashboard');
     }
+    function BossList()
+    {
+        $this->Model->getBossList();
+    }
+    function addEmployee()
+    {
+        $this->Model->addEmployee();
+    }
+    function getEmployees()
+    {
+        $this->Model->getEmployees();
+    }
+    function delEmployee($EmployeeId)
+    {
+        $this->Model->delEmployee($EmployeeId);
+    }
+    function editEmployee($EmployeeId)
+    {
+        $this->Model->editEmployee($EmployeeId);
+    }
+    function email()
+    {
+        $this->Model->generateList();
+    }
+    function checkStatus($EmployeeId)
+    {
+        echo $this->Model->checkStatus($EmployeeId);
+    }
 }

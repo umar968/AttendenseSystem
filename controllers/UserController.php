@@ -18,8 +18,11 @@ class User extends Controller
             //Loggedin Go to Dashboard
             Session::set('loggedIn', true);
             Session::set('loginError', null);
-
-            header('location:../EmployeeDashboard');
+            if ($this->Model->isEmployee()) {
+                header('location:../EmployeeDashboard');
+            } else {
+                header('location:../HrDashboard');
+            }
         } else {
             //Invalid Credentials
             Session::set('loginError', "Invalid Username or Password");
