@@ -1,9 +1,10 @@
 <?php
-class EmployeeDashboard extends Controller
+class HrDashboard extends Controller
 {
     function __construct()
     {
         parent::__construct();
+
         if (!Session::get('loggedIn')) {
             header("location:User");
         } else {
@@ -23,16 +24,6 @@ class EmployeeDashboard extends Controller
     }
     function render()
     {
-        $this->View->render('EmployeeDashboard', 'EmployeeDashboard');
-    }
-    function timeIn($UserId)
-    {
-
-        $this->Model->timeIn($UserId);
-    }
-    function timeOut($UserId)
-    {
-        echo $UserId;
-        $this->Model->timeOut($UserId);
+        $this->View->render('HrDashboard', 'HrDashboard');
     }
 }

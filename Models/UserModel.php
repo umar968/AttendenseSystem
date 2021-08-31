@@ -53,7 +53,7 @@ class UserModel extends Model
         //Check if attendence of date is already added
         //Add the attendence
 
-        $maxTime = "18:00:00";
+        $maxTime = "20:00:00";
         $minTime = "09:00:00";
 
         if (time() <= strtotime($maxTime) && time() >= strtotime($minTime)) {
