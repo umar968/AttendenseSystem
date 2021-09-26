@@ -54,7 +54,7 @@ window.onload = loadTable = () => {
     if (this.readyState == 4 && this.status == 200) {
       EmployeeData = JSON.parse(xhr.responseText);
       console.log(EmployeeData);
-      const table = document.getElementById("table");
+      const table = document.getElementById("listEmployeeTable");
       table.innerHTML = "";
       EmployeeData.forEach((emply, index) => {
         var row = table.insertRow(index);
@@ -139,4 +139,46 @@ const checkStatus = (EmployeeId) => {
     );
     xhr.send();
   };
+};
+
+$(document).ready(function () {
+  $("#listEmployeeTable").hide();
+  $("#employeeForm").hide();
+  $("#attendenceReport").hide();
+});
+
+const addEmployeeBtn = () => {
+  $("#employeeForm").toggle();
+  $("#listEmployeeTable").hide();
+  $("#attendenceReport").hide();
+  $("#attendenceReport").hide();
+};
+
+const listEmployeeBtn = () => {
+  $("#listEmployeeTable").toggle();
+  $("#employeeForm").hide();
+  $("#attendenceReport").hide();
+};
+
+const attendenceReportBtn = () => {
+  $("#attendenceReport").toggle();
+  $("#listEmployeeTable").hide();
+  $("#employeeForm").hide();
+};
+
+const onDateChange = () => {
+  xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      $("#attendenceReport").DataTable({
+        Data: xhr.responseText,
+        columns: [{ column: "Name" }, { column: "Status" }, { column: "Date" }],
+      });
+    }
+  };
+  xhr.open(
+    "GET",
+    `http://localhost/AttendenceSystem/HrDashboard/attendenceReport/${event.target.value}`
+  );
+  xhr.send();
 };

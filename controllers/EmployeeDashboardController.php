@@ -6,7 +6,7 @@ class EmployeeDashboard extends Controller
         parent::__construct();
         if (!Session::get('loggedIn')) {
             header("location:User");
-        } else {
+        } else if (Session::get("role") === "Employee") {
             $this->UserId = Session::get('UserId');
             $this->getUserData();
         }

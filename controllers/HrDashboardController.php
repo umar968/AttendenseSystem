@@ -5,13 +5,14 @@ class HrDashboard extends Controller
     {
         parent::__construct();
 
-        if (!Session::get('loggedIn')) {
+        if (!Session::get('loggedIn') || Session::get("role") !== "HrManager") {
             header("location:User");
         } else {
             $this->UserId = Session::get('UserId');
             $this->getUserData();
         }
     }
+
     private function getUserData()
     {
         $this->loadModel('UserModel');
@@ -50,8 +51,14 @@ class HrDashboard extends Controller
     {
         $this->Model->generateList();
     }
-    function checkStatus($EmployeeId)
+
+    // function checkStatus($EmployeeId)
+    // {
+    //     echo $this->Model->checkStatus($EmployeeId);
+    // }
+
+    function attendenceReport($month)
     {
-        echo $this->Model->checkStatus($EmployeeId);
+        $this->Model->attendenceReport($month);
     }
 }

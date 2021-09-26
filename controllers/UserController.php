@@ -10,17 +10,21 @@ class User extends Controller
     {
         $this->View->render('login', 'login');
     }
+
     function login()
     {
 
         $this->loadModel('UserModel');
+
         if ($this->Model->login($_POST['username'], $_POST['password'])) {
             //Loggedin Go to Dashboard
             Session::set('loggedIn', true);
             Session::set('loginError', null);
             if ($this->Model->isEmployee()) {
+                Session::set('role', 'Employee');
                 header('location:../EmployeeDashboard');
             } else {
+                Session::set('role', 'HrManager');
                 header('location:../HrDashboard');
             }
         } else {

@@ -17,6 +17,7 @@ class UserModel extends Model
             $UserId = $result['UserId'];
 
             Session::set('UserId', $UserId);
+
             return true;
         } else {
             return false;
@@ -89,6 +90,7 @@ class UserModel extends Model
                 //Check if Attendence is already marked or not
                 $query = "Select Status from Attendence where EmployeeId='$EmployeeId' and Date='$Date'";
                 $result = $this->db->db->query($query);
+
                 if (!$result) {
                     echo "Error fetching data 2" . $this->db->db->error;
                 } else {
@@ -293,11 +295,52 @@ class UserModel extends Model
             die("Soory");
         } else {
             if ($result->num_rows > 0) {
-
-                return true;
+                return 1;
             } else {
 
-                return false;
+                return 0;
+            }
+        }
+    }
+    function attendenceReport($month)
+    {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
+        $minDate = $month . '-00';
+        $maxDate = $month . '-31';
+
+        $query = "Select EmployeeId,Date,Status from Attendence where Date between '$minDate' and '$maxDate'";
+
+        $result = $this->db->db->query($query);
+        if (!$result) {
+            die("Soory");
+        } else {
+            if ($result->num_rows > 0) {
+                $dataArry = array();
+                while ($row = $result->fetch_assoc()) {
+                    $status = $row['Status'];
+                    $date = $row['Date'];
+                    $employeeId = $row['EmployeeId'];
+
+                    $query = "Select Name from Employees where EmployeeId=$employeeId";
+                    $result = $this->db->db->query($query);
+                    if (!$result) {
+                        die($this->db->db->error);
+                    } else {
+                        if ($result->num_rows > 0) {
+                            $name = $result->fetch_assoc()['Name'];
+                        }
+                    }
+                    $tempObj = new stdClass();
+                    $tempObj->name = $name;
+                    $tempObj->date = $date;
+                    $tempObj->status = $status;
+                    array_push($dataArry, $tempObj);
+                    echo json_encode($dataArry);
+                }
+            } else {
+                echo "No record found";
             }
         }
     }
